@@ -19,7 +19,7 @@
     "github",
     "issues"
   ],
-  "author": "Vishnu Bharathi",
+  "author": "Vishnu Bharathi <vishnubharathi04@gmail.com> (https://twitter.com/scriptnull)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/scriptnull/mocha-github-reporter/issues"
