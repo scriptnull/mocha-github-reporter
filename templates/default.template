@@ -1,6 +1,6 @@
 ## Passed Tests
-<% _.each(data.passedTests, function (test) { %>
-- [x] <%= test.fullTitle() %>
+<% _.each(data.passedTests, function (testReport) { %>
+- [x] <%= testReport.test.fullTitle() %>
 <% }) %>
 
 ## Failed Tests

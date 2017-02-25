@@ -7,6 +7,8 @@ module.exports = GithubReporter
 
 function GithubReporter (runner, options) {
   var self = this
+  self.passedTests = []
+  self.failedTests = []
   mocha.reporters.Base.call(this, runner)
 
   var formatters = {
@@ -31,15 +33,18 @@ function GithubReporter (runner, options) {
       }
     }
   }
-  var passedTests = []
-  var failedTests = []
+
+  runner.on('start', function () {
+    console.log(':: Github Mocha Reporter ::')
+    console.log()
+  })
 
   runner.on('pass', function (test) {
-    passedTests.push(test)
+    self.passedTests.push({test: test})
   })
 
   runner.on('fail', function (test, err) {
-    failedTests.push({test: test, error: err})
+    self.failedTests.push({test: test, error: err})
   })
 
   runner.on('end', function () {
@@ -95,13 +100,14 @@ function GithubReporter (runner, options) {
       process.exit(1)
     }
 
-    config.reportContent = config.formatter.format(passedTests, failedTests)
+    config.reportContent = config.formatter.format(self.passedTests, self.failedTests)
 
     self.config = config
   })
 }
 
 GithubReporter.prototype.done = function () {
+  var self = this
   superagent
     .post('https://api.github.com/repos/' + this.config.githubRepoOwner + '/' + this.config.githubRepoName + '/issues')
     .set('Content-Type', 'application/json')
@@ -119,7 +125,9 @@ GithubReporter.prototype.done = function () {
         process.exit(1)
       }
 
-      console.log(':: Github Mocha Reporter ::')
-      console.log('Report - ' + res.body.html_url)
+      console.log('Report created => ' + res.body.html_url)
+      console.log()
+
+      process.exit(_.isEmpty(self.failedTests) ? 0 : 1)
     })
 }
