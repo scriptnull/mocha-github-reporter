@@ -1,0 +1,4 @@
+## Passed Tests
+<% _.each(data.passedTests, function (testReport) { %>
+1. <%= testReport.test.fullTitle() %>
+<% }) %>

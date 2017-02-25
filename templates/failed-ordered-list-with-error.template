@@ -1,0 +1,8 @@
+## Failed Tests
+<ol>
+<% _.each(data.failedTests, function (testReport) { %>
+<li><%= testReport.test.fullTitle() %>
+<pre><code><%= testReport.error %></code></pre>
+</li>
+<% }) %>
+</ol>

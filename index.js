@@ -6,31 +6,55 @@ var fs = require('fs')
 module.exports = GithubReporter
 
 function GithubReporter (runner, options) {
+  var formatters = {
+    'overall': './templates/overall.template',
+
+    'all-unordered-list-with-error': './templates/all-unordered-list-with-error.template',
+    'all-ordered-list-with-error': './templates/all-ordered-list-with-error.template',
+
+    'all-unordered-list-without-error': './templates/all-unordered-list-without-error.template',
+    'all-ordered-list-without-error': './templates/all-ordered-list-without-error.template',
+
+    'passed-unordered-list': './templates/passed-unordered-list.template',
+    'failed-unordered-list-with-error': './templates/failed-unordered-list-with-error.template',
+    'failed-unordered-list-without-error': './templates/failed-unordered-list-without-error.template',
+
+    'passed-ordered-list': './templates/passed-ordered-list',
+    'failed-ordered-list-with-error': './templates/failed-ordered-list-with-error.template',
+    'failed-ordered-list-without-error': './templates/failed-ordered-list-without-error.template'
+  }
+
   var self = this
   self.passedTests = []
   self.failedTests = []
+  self.config = {
+    githubAccessToken: process.env['GITHUB_ACCESS_TOKEN'],
+    githubRepoSlug: process.env['GITHUB_REPO_SLUG'],
+    githubIssueAssignees: process.env['GITHUB_ISSUE_ASSIGNEES'] || '',
+    reportTitle: process.env['REPORT_TITLE'],
+    githubCommiter: process.env['COMMITTER'],
+    formatter: formatters['all-ordered-list-with-error']
+  }
   mocha.reporters.Base.call(this, runner)
 
-  var formatters = {
-    default: {
-      format: function (passedTests, failedTests) {
-        try {
-          var content = fs.readFileSync('./templates/default.template').toString()
-          var template = _.template(content, {variable: 'data'})
-          return template({
-            passedTests: passedTests,
-            failedTests: failedTests
-          })
-        } catch (err) {
-          console.error(err)
-          process.exit(1)
-        }
-      }
-    },
-    onlyFailed: {
-      format: function (passedTests, failedTests) {
+  var getTemplateContent = function (formatter) {
+    var content = fs.readFileSync(formatter).toString()
+    var template = _.template(content, {variable: 'data'})
+    return template({
+      passedTests: self.passedTests,
+      failedTests: self.failedTests
+    })
+  }
 
-      }
+  var format = function (formatter) {
+    try {
+      var issueContent = ''
+      issueContent += getTemplateContent(formatters.overall)
+      issueContent += getTemplateContent(formatter)
+      return issueContent
+    } catch (err) {
+      console.error(err)
+      process.exit(1)
     }
   }
 
@@ -48,13 +72,7 @@ function GithubReporter (runner, options) {
   })
 
   runner.on('end', function () {
-    var config = {
-      githubAccessToken: process.env['GITHUB_ACCESS_TOKEN'],
-      githubRepoSlug: process.env['GITHUB_REPO_SLUG'],
-      githubIssueAssignees: process.env['GITHUB_ISSUE_ASSIGNEES'] || '',
-      reportTitle: process.env['REPORT_TITLE'],
-      formatter: formatters.default
-    }
+    var config = self.config
 
     if (!_.isEmpty(options)) {
       config.githubAccessToken = config.githubAccessToken || options.token
@@ -100,9 +118,7 @@ function GithubReporter (runner, options) {
       process.exit(1)
     }
 
-    config.reportContent = config.formatter.format(self.passedTests, self.failedTests)
-
-    self.config = config
+    config.reportContent = format(config.formatter)
   })
 }
 

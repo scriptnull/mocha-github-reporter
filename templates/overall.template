@@ -1,0 +1,18 @@
+## Overall Report
+
+<table>
+<tr>
+  <td>Passed</td>
+  <td><%= data.passedTests.length %></td>
+</tr>
+<tr>
+  <td>Failed</td>
+  <td><%= data.failedTests.length %></td>
+</tr>
+<tr>
+  <td>Total</td>
+  <td><%= data.passedTests.length + data.failedTests.length %></td>
+</tr>
+</table>
+
+---
