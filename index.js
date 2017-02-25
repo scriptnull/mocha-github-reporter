@@ -1,16 +1,28 @@
 var mocha = require('mocha')
 var _ = require('underscore')
-var util = require('util')
-var GithubAdapter = require('./GithubAdapter.js')
+var superagent = require('superagent')
+var fs = require('fs')
 
 module.exports = GithubReporter
 
 function GithubReporter (runner, options) {
+  var self = this
   mocha.reporters.Base.call(this, runner)
+
   var formatters = {
     default: {
       format: function (passedTests, failedTests) {
-
+        try {
+          var content = fs.readFileSync('./templates/default.template').toString()
+          var template = _.template(content, {variable: 'data'})
+          return template({
+            passedTests: passedTests,
+            failedTests: failedTests
+          })
+        } catch (err) {
+          console.error(err)
+          process.exit(1)
+        }
       }
     },
     onlyFailed: {
@@ -27,7 +39,7 @@ function GithubReporter (runner, options) {
   })
 
   runner.on('fail', function (test, err) {
-    failedTests.push(test)
+    failedTests.push({test: test, error: err})
   })
 
   runner.on('end', function () {
@@ -35,6 +47,7 @@ function GithubReporter (runner, options) {
       githubAccessToken: process.env['GITHUB_ACCESS_TOKEN'],
       githubRepoSlug: process.env['GITHUB_REPO_SLUG'],
       githubIssueAssignees: process.env['GITHUB_ISSUE_ASSIGNEES'] || '',
+      reportTitle: process.env['REPORT_TITLE'],
       formatter: formatters.default
     }
 
@@ -82,31 +95,31 @@ function GithubReporter (runner, options) {
       process.exit(1)
     }
 
-    var gApi = new GithubAdapter({
-      token: process.env['GITHUB_ACCESS_TOKEN']
-    })
+    config.reportContent = config.formatter.format(passedTests, failedTests)
 
-    gApi.createIssue(
-      {
-        owner: 'ShipSamples',
-        repo: 'ci-min-node',
-        title: 'Test GithubAdapter API in index'
-      }
-    ).done(
-      function (err, res) {
-        if (err || !res) {
-          console.error('Failed to create Github issue')
-          console.error(err)
-          process.exit(1)
-        }
-        console.log(res.body)
-        var totalTests = passedTests.length + failedTests.length
-        console.log(':: Github Reporter ::')
-        console.log(util.format('Passed %s/%s', passedTests.length, totalTests))
-        console.log(util.format('Failed %s/%s', failedTests.length, totalTests))
-      }
-    )
-
-    // var issueContent = config.formatter.format(passedTests, failedTests)
+    self.config = config
   })
+}
+
+GithubReporter.prototype.done = function () {
+  superagent
+    .post('https://api.github.com/repos/' + this.config.githubRepoOwner + '/' + this.config.githubRepoName + '/issues')
+    .set('Content-Type', 'application/json')
+    .set('Authorization', 'token ' + this.config.githubAccessToken)
+    .set('User-Agent', 'mocha github reporter')
+    .set('Accept', 'application/vnd.github.v3+json')
+    .send({
+      title: this.config.reportTitle,
+      body: this.config.reportContent
+    })
+    .end(function (err, res) {
+      if (err || !res || (res && !res.body)) {
+        console.error('Error creating issue in the repository')
+        console.error(err)
+        process.exit(1)
+      }
+
+      console.log(':: Github Mocha Reporter ::')
+      console.log('Report - ' + res.body.html_url)
+    })
 }
