@@ -9,7 +9,7 @@
 <ol>
 <% _.each(data.failedTests, function (testReport) { %>
 <li><%= testReport.test.fullTitle() %>
-<pre><code><%= testReport.error %></code></pre>
+<pre><code><%= testReport.error.stack.replace(/</g, '&lt;').replace(/>/g, '&gt;') %></code></pre>
 </li>
 <% }) %>
 </ol>

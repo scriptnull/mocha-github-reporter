@@ -59,7 +59,7 @@ function GithubReporter (runner, options) {
   }
 
   runner.on('start', function () {
-    console.log(':: Github Mocha Reporter ::')
+    console.log(':: Mocha Github Reporter ::')
     console.log()
   })
 
