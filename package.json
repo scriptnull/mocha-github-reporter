@@ -1,0 +1,40 @@
+{
+  "name": "mocha-github-reporter",
+  "version": "1.0.0",
+  "description": "Reports Mocha test results as github issue.",
+  "main": "index.js",
+  "scripts": {
+    "test": "source dev.env && mocha --reporter . tests/dummy.js ",
+    "test-gAdapter": "source dev.env && mocha tests/GithubAdapterTests.js",
+    "codestyle-check": "standard",
+    "codestyle-fix": "standard --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scriptnull/mocha-github-reporter.git"
+  },
+  "keywords": [
+    "mocha",
+    "reporter",
+    "github",
+    "issues"
+  ],
+  "author": "Vishnu Bharathi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scriptnull/mocha-github-reporter/issues"
+  },
+  "homepage": "https://github.com/scriptnull/mocha-github-reporter#readme",
+  "dependencies": {
+    "async": "^2.1.5",
+    "bluebird": "^3.4.7",
+    "mocha": "^3.2.0",
+    "superagent": "^3.5.0",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "github-create-issue": "^2.0.0",
+    "mocha": "^3.2.0",
+    "standard": "^8.6.0"
+  }
+}
