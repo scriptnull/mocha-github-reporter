@@ -10,7 +10,7 @@ $ npm install --save-dev mocha-github-reporter
 ```
 
 ## Usage
-Set the following environment variables.
+Setup environment variables.
 
 | ENVIRONMENT VARIABLE | EXAMPLE |
 |----------------------|---------|
@@ -19,3 +19,8 @@ Set the following environment variables.
 | REPORT_TITLE | Mocha report for Build $BUILD_NUMBER |
 | REPORT_ALWAYS | true |
 
+Run mocha.
+
+```bash
+$ mocha --reporter mocha-github-reporter tests/
+```
