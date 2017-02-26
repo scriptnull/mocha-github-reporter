@@ -23,7 +23,7 @@ function GithubReporter (runner, options) {
       try {
         var suiteContent = ''
         if (level === 0) {
-          suiteContent += '### Suite Chart\n'
+          suiteContent += '### Report\n'
           suiteContent += '```\n'
         }
 
