@@ -3,6 +3,7 @@ var _ = require('underscore')
 var superagent = require('superagent')
 var fs = require('fs')
 var leftPad = require('left-pad')
+var path = require('path')
 
 module.exports = GithubReporter
 
@@ -40,7 +41,7 @@ function GithubReporter (runner, options) {
 
         if (level === 0) {
           suiteContent += '```\n'
-          suiteContent += getTemplateContent('./templates/failed-ordered-list-with-error.template', {
+          suiteContent += getTemplateContent(path.join(__dirname, './templates/failed-ordered-list-with-error.template'), {
             failedTests: self.failedTests
           })
         }
@@ -141,7 +142,7 @@ function GithubReporter (runner, options) {
       passedTests: self.passedTests,
       failedTests: self.failedTests
     }
-    var overallContent = getTemplateContent('./templates/overall.template', opts)
+    var overallContent = getTemplateContent(path.join(__dirname, './templates/overall.template'), opts)
     config.reportContent = overallContent + config.formatter(self.rootSuite, 0)
   })
 }
