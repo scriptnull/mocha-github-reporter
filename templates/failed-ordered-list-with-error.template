@@ -1,8 +1,16 @@
-## Failed Tests
+### Failed Tests
+<% if (data.failedTests.length === 0 ) { %>
+None
+<% } else { %>
 <ol>
 <% _.each(data.failedTests, function (testReport) { %>
 <li><%= testReport.test.fullTitle() %>
-<pre><code><%= testReport.error.stack.replace(/</g, '&lt;').replace(/>/g, '&gt;') %></code></pre>
+<% if (testReport.error && testReport.error.stack) { %>
+<pre><code><% if (_.has(testReport.test.err, 'expected')) { %>expected: <%= testReport.test.err.expected %><% } %><% if (_.has(testReport.test.err, 'actual')) { %>, actual: <%= testReport.test.err.actual %><% } %>
+<%= testReport.error.stack.replace(/</g, '&lt;').replace(/>/g, '&gt;') %>
+</code></pre>
+<% } %>
 </li>
 <% }) %>
 </ol>
+<% } %>

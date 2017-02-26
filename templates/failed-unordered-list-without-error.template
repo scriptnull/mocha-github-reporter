@@ -1,7 +1,0 @@
-## Failed Tests
-<ul>
-<% _.each(data.failedTests, function (testReport) { %>
-<li><%= testReport.test.fullTitle() %>
-</li>
-<% }) %>
-</ul>

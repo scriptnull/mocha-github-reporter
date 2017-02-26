@@ -2,26 +2,54 @@ var mocha = require('mocha')
 var _ = require('underscore')
 var superagent = require('superagent')
 var fs = require('fs')
+var leftPad = require('left-pad')
 
 module.exports = GithubReporter
 
 function GithubReporter (runner, options) {
+  var getTemplateContent = function (formatterPath, opts) {
+    try {
+      var content = fs.readFileSync(formatterPath).toString()
+      var template = _.template(content, {variable: 'data'})
+      return template(opts)
+    } catch (err) {
+      console.error(err)
+      process.exit(1)
+    }
+  }
+
   var formatters = {
-    'overall': './templates/overall.template',
+    'all-suite': function (suite, level) {
+      try {
+        var suiteContent = ''
+        if (level === 0) {
+          suiteContent += '### Suite Chart\n'
+          suiteContent += '```\n'
+        }
 
-    'all-unordered-list-with-error': './templates/all-unordered-list-with-error.template',
-    'all-ordered-list-with-error': './templates/all-ordered-list-with-error.template',
+        suiteContent += leftPad(suite.title, (suite.title.length + (level * 2))) + '\n'
 
-    'all-unordered-list-without-error': './templates/all-unordered-list-without-error.template',
-    'all-ordered-list-without-error': './templates/all-ordered-list-without-error.template',
+        _.each(suite.tests, function (test) {
+          var testString = '[' + test.state + '] ' + test.title
+          suiteContent += leftPad(testString, (testString.length + (level * 4))) + '\n'
+        })
 
-    'passed-unordered-list': './templates/passed-unordered-list.template',
-    'failed-unordered-list-with-error': './templates/failed-unordered-list-with-error.template',
-    'failed-unordered-list-without-error': './templates/failed-unordered-list-without-error.template',
+        _.each(suite.suites, function (innerSuite) {
+          suiteContent += formatters['all-suite'](innerSuite, level + 1)
+        })
 
-    'passed-ordered-list': './templates/passed-ordered-list',
-    'failed-ordered-list-with-error': './templates/failed-ordered-list-with-error.template',
-    'failed-ordered-list-without-error': './templates/failed-ordered-list-without-error.template'
+        if (level === 0) {
+          suiteContent += '```\n'
+          suiteContent += getTemplateContent('./templates/failed-ordered-list-with-error.template', {
+            failedTests: self.failedTests
+          })
+        }
+        return suiteContent
+      } catch (err) {
+        console.error(err)
+        process.exit(1)
+      }
+    }
   }
 
   var self = this
@@ -33,34 +61,27 @@ function GithubReporter (runner, options) {
     githubIssueAssignees: process.env['GITHUB_ISSUE_ASSIGNEES'] || '',
     reportTitle: process.env['REPORT_TITLE'],
     githubCommiter: process.env['COMMITTER'],
-    formatter: formatters['all-ordered-list-with-error']
+    formatter: formatters[process.env['REPORT_FORMATTER']] || formatters['all-suite']
   }
   mocha.reporters.Base.call(this, runner)
-
-  var getTemplateContent = function (formatter) {
-    var content = fs.readFileSync(formatter).toString()
-    var template = _.template(content, {variable: 'data'})
-    return template({
-      passedTests: self.passedTests,
-      failedTests: self.failedTests
-    })
-  }
-
-  var format = function (formatter) {
-    try {
-      var issueContent = ''
-      issueContent += getTemplateContent(formatters.overall)
-      issueContent += getTemplateContent(formatter)
-      return issueContent
-    } catch (err) {
-      console.error(err)
-      process.exit(1)
-    }
-  }
 
   runner.on('start', function () {
     console.log(':: Mocha Github Reporter ::')
     console.log()
+  })
+
+  self.rootSuite = null
+  self.suiteLevel = 0
+
+  runner.on('suite', function (suite) {
+    if (self.suiteLevel === 0) {
+      self.rootSuite = suite
+    }
+    self.suiteLevel++
+  })
+
+  runner.on('suite end', function () {
+    self.suiteLevel--
   })
 
   runner.on('pass', function (test) {
@@ -117,8 +138,12 @@ function GithubReporter (runner, options) {
       console.error()
       process.exit(1)
     }
-
-    config.reportContent = format(config.formatter)
+    var opts = {
+      passedTests: self.passedTests,
+      failedTests: self.failedTests
+    }
+    var overallContent = getTemplateContent('./templates/overall.template', opts)
+    config.reportContent = overallContent + config.formatter(self.rootSuite, 0)
   })
 }
 
