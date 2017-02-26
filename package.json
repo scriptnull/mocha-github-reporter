@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "source dev.env && mocha --reporter . tests/dummy.js ",
+    "test-all-pass": "source dev.env && mocha --reporter . tests/dummy-all-pass.js",
     "test-no-report": "source dev.env && mocha tests/dummy.js",
     "codestyle-check": "standard",
     "codestyle-fix": "standard --fix"

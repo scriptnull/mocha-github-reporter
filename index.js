@@ -56,18 +56,17 @@ function GithubReporter (runner, options) {
   self.passedTests = []
   self.failedTests = []
   self.config = {
+    reportAlways: (process.env['REPORT_ALWAYS'] === 'true') || false,
     githubAccessToken: process.env['GITHUB_ACCESS_TOKEN'],
     githubRepoSlug: process.env['GITHUB_REPO_SLUG'],
     githubIssueAssignees: process.env['GITHUB_ISSUE_ASSIGNEES'] || '',
     reportTitle: process.env['REPORT_TITLE'],
-    githubCommiter: process.env['COMMITTER'],
     formatter: formatters[process.env['REPORT_FORMATTER']] || formatters['all-suite']
   }
   mocha.reporters.Base.call(this, runner)
 
   runner.on('start', function () {
     console.log(':: Mocha Github Reporter ::')
-    console.log()
   })
 
   self.rootSuite = null
@@ -149,6 +148,14 @@ function GithubReporter (runner, options) {
 
 GithubReporter.prototype.done = function () {
   var self = this
+  if (_.isEmpty(self.failedTests) && (self.config.reportAlways === false)) {
+    console.log('Pass - ' + self.passedTests.length)
+    console.log('Failure - ' + self.failedTests.length)
+    console.log('Total - ' + (self.passedTests.length + self.failedTests.length))
+    console.log('Skipping report, due to 0 failures. To report always, set REPORT_ALWAYS=true env.')
+    console.log()
+    process.exit(0)
+  }
   superagent
     .post('https://api.github.com/repos/' + this.config.githubRepoOwner + '/' + this.config.githubRepoName + '/issues')
     .set('Content-Type', 'application/json')
@@ -165,6 +172,11 @@ GithubReporter.prototype.done = function () {
         console.error(err)
         process.exit(1)
       }
+
+      console.log('Pass - ' + self.passedTests.length)
+      console.log('Failure - ' + self.failedTests.length)
+      console.log('Total - ' + (self.passedTests.length + self.failedTests.length))
+      console.log()
 
       console.log('Report created => ' + res.body.html_url)
       console.log()
