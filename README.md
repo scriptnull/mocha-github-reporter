@@ -1,6 +1,6 @@
 # mocha-github-reporter
 
-[![Run Status](https://api.shippable.com/projects/58b1d2d35b77cc06007641a6/badge?branch=master)](https://app.shippable.com/projects/58b1d2d35b77cc06007641a6) ![license](https://img.shields.io/github/license/scriptnull/mocha-github-reporter.svg)
+[![Run Status](https://api.shippable.com/projects/58b1d2d35b77cc06007641a6/badge?branch=master)](https://app.shippable.com/projects/58b1d2d35b77cc06007641a6) [![npm](https://img.shields.io/npm/v/mocha-github-reporter.svg)]() [![David](https://img.shields.io/david/scriptnull/mocha-github-reporter.svg)]() [![David](https://img.shields.io/david/dev/scriptnull/mocha-github-reporter.svg)]() ![code style standard](https://img.shields.io/badge/code_style-standard-brightgreen.svg) ![license](https://img.shields.io/github/license/scriptnull/mocha-github-reporter.svg)
 
 Delivering mocha results from CI to Github. 📋
 
