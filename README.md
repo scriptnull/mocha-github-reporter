@@ -28,3 +28,12 @@ $ mocha --reporter mocha-github-reporter tests/
 
 ### all-suite
 ![all-suite](https://cloud.githubusercontent.com/assets/4211715/23343448/bea6fb28-fc91-11e6-9692-a710dd5659e2.png)
+
+## Contribute
+- Bug fixes.
+- Adding new formatters.
+
+[Open issue](https://github.com/scriptnull/mocha-github-reporter/issues/new) to discuss more.
+
+## Thanks
+> "Thanks for taking time to evaluate `mocha-github-reporter`. It means a lot to this project. I hope that, this project takes you one step closer to a supercharged workflow" - [scriptnull](https://twitter.com/scriptnull)
