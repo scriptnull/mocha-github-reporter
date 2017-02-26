@@ -120,14 +120,14 @@ function GithubReporter (runner, options) {
 
     if (_.isEmpty(config.githubRepoSlug)) {
       missingConfigs.push('GITHUB_REPO_SLUG env or --reporter-options slug=owner/repo')
-    }
+    } else {
+      var splittedSlug = config.githubRepoSlug.split('/')
+      config.githubRepoOwner = splittedSlug[0]
+      config.githubRepoName = splittedSlug[1]
 
-    var splittedSlug = config.githubRepoSlug.split('/')
-    config.githubRepoOwner = splittedSlug[0]
-    config.githubRepoName = splittedSlug[1]
-
-    if (_.isEmpty(config.githubRepoOwner) || _.isEmpty(config.githubRepoName)) {
-      missingConfigs.push('GITHUB_REPO_SLUG="owner/repo" or --reporter-options slug=owner/repo')
+      if (_.isEmpty(config.githubRepoOwner) || _.isEmpty(config.githubRepoName)) {
+        missingConfigs.push('GITHUB_REPO_SLUG="owner/repo" or --reporter-options slug=owner/repo')
+      }
     }
 
     if (!_.isEmpty(missingConfigs)) {
