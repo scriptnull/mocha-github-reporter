@@ -1,6 +1,6 @@
 {
   "name": "mocha-github-reporter",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Reports Mocha test results as github issue.",
   "main": "index.js",
   "scripts": {
