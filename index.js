@@ -50,6 +50,17 @@ function GithubReporter (runner, options) {
         console.error(err)
         process.exit(1)
       }
+    },
+    'failed-checklist': function (suite, level) {
+      try {
+        var reportContent = getTemplateContent(path.join(__dirname, './templates/failed-checklist-with-error.template'), {
+          failedTests: self.failedTests
+        })
+        return reportContent
+      } catch (err) {
+        console.log(err)
+        process.exit(1)
+      }
     }
   }
 
