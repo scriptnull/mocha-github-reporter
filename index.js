@@ -20,7 +20,7 @@ function GithubReporter (runner, options) {
   }
 
   var formatters = {
-    'all-suite': function (suite, level) {
+    'all-suites': function (suite, level) {
       try {
         var suiteContent = ''
         if (level === 0) {
@@ -36,7 +36,7 @@ function GithubReporter (runner, options) {
         })
 
         _.each(suite.suites, function (innerSuite) {
-          suiteContent += formatters['all-suite'](innerSuite, level + 1)
+          suiteContent += formatters['all-suites'](innerSuite, level + 1)
         })
 
         if (level === 0) {
@@ -62,7 +62,7 @@ function GithubReporter (runner, options) {
     githubRepoSlug: process.env['GITHUB_REPO_SLUG'],
     githubIssueAssignees: process.env['GITHUB_ISSUE_ASSIGNEES'] || '',
     reportTitle: process.env['REPORT_TITLE'],
-    formatter: formatters[process.env['REPORT_FORMATTER']] || formatters['all-suite']
+    formatter: formatters[process.env['REPORT_FORMATTER']] || formatters['all-suites']
   }
   mocha.reporters.Base.call(this, runner)
 

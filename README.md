@@ -26,8 +26,8 @@ $ mocha --reporter mocha-github-reporter tests/
 ```
 ## Reports
 
-### all-suite
-![all-suite](https://cloud.githubusercontent.com/assets/4211715/23343448/bea6fb28-fc91-11e6-9692-a710dd5659e2.png)
+### all-suites
+![all-suites](https://cloud.githubusercontent.com/assets/4211715/23343448/bea6fb28-fc91-11e6-9692-a710dd5659e2.png)
 
 ## Contribute
 - Bug fixes.
