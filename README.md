@@ -33,6 +33,7 @@ Resembles default mocha reporting.
 ![all-suites](/screens/all-suites.png)
 
 ### all-suites-emoji
+emoji can be configured via `PASSED_EMOJI` and `FAILED_EMOJI` environment variables. Example: FAILED_EMOJI='poop'
 ![all-suites-emoji](/screens/all-suites-emoji.png)
 
 ### failed-checklist
