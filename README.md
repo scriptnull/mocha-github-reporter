@@ -18,6 +18,7 @@ Setup environment variables.
 | GITHUB_REPO_SLUG | scriptnull/mocha-github-reporter |
 | REPORT_TITLE | Mocha report for Build $BUILD_NUMBER |
 | REPORT_ALWAYS | true |
+| REPORT_FORMATTER | `all-suites` (default). See below for more. |
 
 Run mocha.
 
@@ -25,11 +26,14 @@ Run mocha.
 $ mocha --reporter mocha-github-reporter tests/
 ```
 ## Reports
+Any one of the following report formats could be setup by specifying it as REPORT_FORMATTER environment variable.
 
 ### all-suites
+Resembles default mocha reporting.
 ![all-suites](/screens/all-suites.png)
 
 ### failed-checklist
+Suited to be used as a checklist for sending PR fixes.
 ![failed-checklist](/screens/failed-checklist.png)
 
 ## Contribute
