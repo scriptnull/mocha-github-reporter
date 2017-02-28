@@ -51,6 +51,49 @@ function GithubReporter (runner, options) {
         process.exit(1)
       }
     },
+    'all-suites-emoji': function (suite, level) {
+      try {
+        var passedEmoji = process.env['PASSED_EMOJI'] || 'white_check_mark'
+        var failedEmoji = process.env['FAILED_EMOJI'] || 'x'
+        var suiteContent = ''
+
+        var suiteTitle = ''
+
+        if (level === 0) {
+          suiteContent += '### Report\n'
+        }
+
+        if (level !== 0) {
+          suiteTitle = ':open_file_folder: __' + suite.title + '__'
+        }
+
+        suiteContent += leftPad(suiteTitle, (suiteTitle.length + (level * 2)), '-') + '\n'
+
+        var getEmoji = function (testState) {
+          return testState === 'passed' ? passedEmoji : failedEmoji
+        }
+
+        _.each(suite.tests, function (test) {
+          var testString = ':' + getEmoji(test.state) + ': ' + test.title
+          suiteContent += leftPad(testString, (testString.length + (level * 4)), '-') + '\n'
+        })
+
+        _.each(suite.suites, function (innerSuite) {
+          suiteContent += formatters['all-suites-emoji'](innerSuite, level + 1)
+        })
+
+        if (level === 0) {
+          suiteContent += getTemplateContent(path.join(__dirname, './templates/failed-ordered-list-with-error.template'), {
+            failedTests: self.failedTests
+          })
+        }
+
+        return suiteContent
+      } catch (err) {
+        console.log(err)
+        process.exit(1)
+      }
+    },
     'failed-checklist': function (suite, level) {
       try {
         var reportContent = getTemplateContent(path.join(__dirname, './templates/failed-checklist-with-error.template'), {

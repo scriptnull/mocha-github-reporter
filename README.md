@@ -32,6 +32,9 @@ Any one of the following report formats could be setup by specifying it as REPOR
 Resembles default mocha reporting.
 ![all-suites](/screens/all-suites.png)
 
+### all-suites-emoji
+![all-suites-emoji](/screens/all-suites-emoji.png)
+
 ### failed-checklist
 Suited to be used as a checklist for sending PR fixes.
 ![failed-checklist](/screens/failed-checklist.png)
