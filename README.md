@@ -26,7 +26,7 @@ Run mocha.
 $ mocha --reporter mocha-github-reporter tests/
 ```
 ## Reports
-Any one of the following report formats could be setup by specifying it as REPORT_FORMATTER environment variable.
+Any one of the following report formats could be setup by specifying it as `REPORT_FORMATTER` environment variable.
 
 ### all-suites
 Resembles default mocha reporting.
