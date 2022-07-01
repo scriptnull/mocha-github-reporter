@@ -197,7 +197,7 @@ function GithubReporter (runner, options) {
       failedTests: self.failedTests
     }
     var overallContent = getTemplateContent(path.join(__dirname, './templates/overall.template'), opts)
-    config.reportContent = "<details><summary>Click for report</summary>" + overallContent + config.formatter(self.rootSuite, 0) + "</details>"
+    config.reportContent = '<details><summary>Click for report</summary>' + overallContent + config.formatter(self.rootSuite, 0) + '</details>'
   })
 }
 
